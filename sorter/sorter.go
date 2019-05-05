@@ -4,10 +4,10 @@ import (
 	"bufio"
 	"flag"
 	"fmt"
+	"go-grammar/sorter/algorithms/bubblesort"
+	"go-grammar/sorter/algorithms/qsort"
 	"io"
 	"os"
-	"sorter/src/sorter/algorithms/bubblesort"
-	"sorter/src/sorter/algorithms/qsort"
 	"strconv"
 	"time"
 )
