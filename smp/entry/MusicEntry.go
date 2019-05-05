@@ -1,4 +1,4 @@
-package main
+package entry
 
 type MusicEntry struct {
 	Id     string

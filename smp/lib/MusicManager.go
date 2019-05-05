@@ -2,29 +2,29 @@ package lib
 
 import (
 	"errors"
-	"go-grammar/smp"
+	"go-grammar/smp/entry"
 )
 
 type MusicManager struct {
-	musics []smp.MusicEntry
+	musics []entry.MusicEntry
 }
 
 func NewMusicManager() *MusicManager {
-	return &MusicManager{make([]smp.MusicEntry, 0)}
+	return &MusicManager{make([]entry.MusicEntry, 0)}
 }
 
 func (m *MusicManager) Len() int {
 	return len(m.musics)
 }
 
-func (m *MusicManager) Get(index int) (music *smp.MusicEntry, err error) {
+func (m *MusicManager) Get(index int) (music *entry.MusicEntry, err error) {
 	if index < 0 || index >= len(m.musics) {
 		return nil, errors.New("超出歌曲范围")
 	}
 	return &m.musics[index], nil
 }
 
-func (m *MusicManager) Find(name string) *smp.MusicEntry {
+func (m *MusicManager) Find(name string) *entry.MusicEntry {
 	if len(m.musics) == 0 {
 		return nil
 	}
@@ -37,11 +37,11 @@ func (m *MusicManager) Find(name string) *smp.MusicEntry {
 	return nil
 }
 
-func (m *MusicManager) Add(music *smp.MusicEntry) {
+func (m *MusicManager) Add(music *entry.MusicEntry) {
 	m.musics = append(m.musics, *music)
 }
 
-func (m *MusicManager) Remove(index int) *smp.MusicEntry {
+func (m *MusicManager) Remove(index int) *entry.MusicEntry {
 	if index < 0 || len(m.musics) <= index {
 		return nil
 	}
@@ -51,7 +51,7 @@ func (m *MusicManager) Remove(index int) *smp.MusicEntry {
 	if index < len(m.musics)-1 {
 		m.musics = append(m.musics[:index-1], m.musics[index+1:]...)
 	} else if index == 0 {
-		m.musics = make([]smp.MusicEntry, 0)
+		m.musics = make([]entry.MusicEntry, 0)
 	} else {
 		m.musics = m.musics[:index-1]
 	}
