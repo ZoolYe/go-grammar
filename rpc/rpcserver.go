@@ -24,6 +24,11 @@ func main() {
 	arith.Multiply(&args, &reply)
 	fmt.Println(reply)
 
+	var args2 = Args{9, 3}
+	var quotient Quotient
+	arith.Divide(&args2, &quotient)
+	fmt.Println(quotient.Rem, quotient.Quo)
+
 }
 
 func (arith *Arith) Multiply(args *Args, reply *int) error {
