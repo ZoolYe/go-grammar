@@ -25,3 +25,8 @@ func referenceSemantics() {
 	b[1]++
 	fmt.Println(a, *b)
 }
+
+/*
+	值类型：int、float、bool和string这些类型都属于值类型
+	引用类型：特指slice、map、channel这三种预定义类型
+*/

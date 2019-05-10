@@ -10,7 +10,7 @@ func main() {
 	}
 
 	for _, ch := range chs {
-		<-ch
+		fmt.Println(<-ch)
 	}
 }
 
