@@ -13,8 +13,10 @@ import (
 */
 func helloHandler(w http.ResponseWriter, r *http.Request) {
 	io.WriteString(w, "Hello , World!")
-	id := r.URL.RawQuery
-	fmt.Println(id)
+	id := r.FormValue("id")
+	if id != "" {
+		fmt.Println(id)
+	}
 }
 
 func main() {

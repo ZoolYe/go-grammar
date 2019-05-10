@@ -8,36 +8,42 @@ import (
 	"log"
 	"net/http"
 	"os"
+	"path"
+	"strings"
 )
 
-const UPLOAD_DIR = "C:/Users/ZOOL/Desktop/uploads"
+const (
+	UPLOAD_DIR   = "C:/Users/ZOOL/Desktop/uploads"
+	TEMPLATE_DIR = "photoweb/views"
+)
+
+var templates = make(map[string]*template.Template)
 
 func uploadHandler(w http.ResponseWriter, r *http.Request) {
 
 	if r.Method == "GET" {
-		renderHtml(w, "photoweb/uploads/upload.html", nil)
+		renderHtml(w, "upload", nil)
 		return
 	}
 
 	if r.Method == "POST" {
 
 		file, header, err := r.FormFile("image")
+
 		if err != nil {
 			http.Error(w, errors.New("请上传图片").Error(), http.StatusForbidden)
 			return
 		}
+
 		fileName := header.Filename
+
 		defer file.Close()
 		t, err := os.Create(UPLOAD_DIR + "/" + fileName)
-		if err != nil {
-			http.Error(w, "图片上传失败", http.StatusInternalServerError)
-			return
-		}
+		check(err)
+
 		defer t.Close()
-		if _, err := io.Copy(t, file); err != nil {
-			http.Error(w, "图片存储失败", http.StatusInternalServerError)
-			return
-		}
+		_, errCopy := io.Copy(t, file)
+		check(errCopy)
 		http.Redirect(w, r, "/view?id="+fileName, http.StatusFound)
 	}
 
@@ -64,10 +70,7 @@ func isExists(path string) bool {
 
 func listHandle(w http.ResponseWriter, r *http.Request) {
 	fileInfoArr, err := ioutil.ReadDir(UPLOAD_DIR)
-	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	check(err)
 
 	locals := make(map[string]interface{})
 	var images []string
@@ -75,17 +78,44 @@ func listHandle(w http.ResponseWriter, r *http.Request) {
 		images = append(images, fileInfo.Name())
 	}
 	locals["images"] = images
-	renderHtml(w, "photoweb/uploads/list.html", locals)
+	renderHtml(w, "list", locals)
 }
 
 //渲染Html模板
-func renderHtml(w http.ResponseWriter, htmlPath string, data interface{}) {
-	t, err := template.ParseFiles(htmlPath)
+func renderHtml(w http.ResponseWriter, htmlName string, data interface{}) error {
+	return templates[htmlName].Execute(w, data)
+}
+
+func init() {
+
+	fileInfoArr, err := ioutil.ReadDir(TEMPLATE_DIR)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
+		panic(err)
 		return
 	}
-	t.Execute(w, data)
+
+	var templateName, templatePath string
+
+	for _, fileInfo := range fileInfoArr {
+		templateName = fileInfo.Name()
+		//path.Ext获取文件的扩展名
+		if ext := path.Ext(templateName); ext != ".html" {
+			continue
+		}
+		templatePath = TEMPLATE_DIR + "/" + templateName
+		log.Println("正在加载Template模板", templatePath)
+		//确保了模板不能解析成功时，一定会触发错误处理流程
+		t := template.Must(template.ParseFiles(templatePath))
+		newName := strings.Replace(templateName, ".html", "", -1)
+		templates[newName] = t
+	}
+}
+
+//处理异常
+func check(err error) {
+	if err != nil {
+		panic(err)
+	}
 }
 
 func main() {
