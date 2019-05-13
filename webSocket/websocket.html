@@ -11,16 +11,19 @@
 
         sock = new WebSocket(wsuri);
 
+        /*onopen 建立连接后触发*/
         sock.onopen = function () {
-            console.log("connected to " + wsuri);
+            console.log("链接到： " + wsuri);
         }
 
+        /*onclose 关闭连接时触发*/
         sock.onclose = function (e) {
-            console.log("connection closed (" + e.code + ")");
+            console.log("链接已关闭 (" + e.code + ")");
         }
 
+        /*onmessage 收到消息后触发*/
         sock.onmessage = function (e) {
-            console.log("message received: " + e.data);
+            console.log("收到消息: " + e.data);
         }
     };
 
@@ -32,7 +35,7 @@
 <h1>WebSocket Echo Test</h1>
 <form>
     <p>
-        Message: <input id="message" type="text" value="Hello, world!">
+        消息: <input id="message" type="text" value="Hello, world!">
     </p>
 </form>
 <button onclick="send();">发送消息</button>

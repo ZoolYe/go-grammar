@@ -14,15 +14,15 @@ func echo(ws *websocket.Conn) {
 	for {
 		var reply string
 		if err := websocket.Message.Receive(ws, &reply); err != nil {
-			fmt.Println("Can't receive")
+			fmt.Println("无法接受消息")
 		}
 
-		fmt.Println("Received back from client: " + reply)
-		msg := "Received:  " + reply
-		fmt.Println("Sending to client: " + msg)
+		fmt.Println("收到客户端消息: " + reply)
 
+		msg := "收到:  " + reply
+		fmt.Println("发送消息客户端: " + msg)
 		if err = websocket.Message.Send(ws, msg); err != nil {
-			fmt.Println("Can't send")
+			fmt.Println("发送失败")
 			break
 		}
 	}
@@ -30,6 +30,7 @@ func echo(ws *websocket.Conn) {
 }
 
 func main() {
+
 	http.Handle("/", websocket.Handler(echo))
 
 	if err := http.ListenAndServe(":6244", nil); err != nil {
